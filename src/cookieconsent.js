@@ -1,16 +1,20 @@
+
 /*!
  * CookieConsent v2.9.1
  * https://www.github.com/orestbida/cookieconsent
  * Author Orest Bida
  * Released under the MIT License
  */
-(function(){
+(function () {
     'use strict';
+    
+    const ReactDOM = require('react-dom');
+
     /**
      * @param {HTMLElement} [root] - [optional] element where the cookieconsent will be appended
      * @returns {Object} cookieconsent object with API
      */
-    var CookieConsent = function(root){
+    var CookieConsent = function (root) {
 
         /**
          * CHANGE THIS FLAG FALSE TO DISABLE console.log()
@@ -212,7 +216,7 @@
          * Update config settings
          * @param {Object} user_config
          */
-        var _setConfig = function(_user_config){
+        var _setConfig = function (_user_config) {
 
             /**
              * Make user configuration globally available
@@ -221,55 +225,55 @@
 
             _log("CookieConsent [CONFIG]: received_config_settings ", user_config);
 
-            if(typeof user_config['cookie_expiration'] === "number")
+            if (typeof user_config['cookie_expiration'] === "number")
                 _config.cookie_expiration = user_config['cookie_expiration'];
 
-            if(typeof user_config['cookie_necessary_only_expiration'] === "number")
-                _config.cookie_necessary_only_expiration  = user_config['cookie_necessary_only_expiration'];
+            if (typeof user_config['cookie_necessary_only_expiration'] === "number")
+                _config.cookie_necessary_only_expiration = user_config['cookie_necessary_only_expiration'];
 
-            if(typeof user_config['autorun'] === "boolean")
+            if (typeof user_config['autorun'] === "boolean")
                 _config.autorun = user_config['autorun'];
 
-            if(typeof user_config['cookie_domain'] === "string")
+            if (typeof user_config['cookie_domain'] === "string")
                 _config.cookie_domain = user_config['cookie_domain'];
 
-            if(typeof user_config['cookie_same_site'] === "string")
+            if (typeof user_config['cookie_same_site'] === "string")
                 _config.cookie_same_site = user_config['cookie_same_site'];
 
-            if(typeof user_config['cookie_path'] === "string")
+            if (typeof user_config['cookie_path'] === "string")
                 _config.cookie_path = user_config['cookie_path'];
 
-            if(typeof user_config['cookie_name'] === "string")
+            if (typeof user_config['cookie_name'] === "string")
                 _config.cookie_name = user_config['cookie_name'];
 
-            if(typeof user_config['onAccept'] === "function")
+            if (typeof user_config['onAccept'] === "function")
                 onAccept = user_config['onAccept'];
 
-            if(typeof user_config['onFirstAction'] === "function")
+            if (typeof user_config['onFirstAction'] === "function")
                 onFirstAction = user_config['onFirstAction'];
 
-            if(typeof user_config['onChange'] === "function")
+            if (typeof user_config['onChange'] === "function")
                 onChange = user_config['onChange'];
 
-            if(user_config['mode'] === 'opt-out')
+            if (user_config['mode'] === 'opt-out')
                 _config.mode = 'opt-out';
 
-            if(typeof user_config['revision'] === "number"){
+            if (typeof user_config['revision'] === "number") {
                 user_config['revision'] > -1 && (_config.revision = user_config['revision']);
                 revision_enabled = true;
             }
 
-            if(typeof user_config['autoclear_cookies'] === "boolean")
+            if (typeof user_config['autoclear_cookies'] === "boolean")
                 _config.autoclear_cookies = user_config['autoclear_cookies'];
 
-            if(user_config['use_rfc_cookie'] === true)
+            if (user_config['use_rfc_cookie'] === true)
                 _config.use_rfc_cookie = true;
 
-            if(typeof user_config['hide_from_bots'] === "boolean"){
+            if (typeof user_config['hide_from_bots'] === "boolean") {
                 _config.hide_from_bots = user_config['hide_from_bots'];
             }
 
-            if(_config.hide_from_bots){
+            if (_config.hide_from_bots) {
                 is_bot = navigator &&
                     ((navigator.userAgent && /bot|crawl|spider|slurp|teoma/i.test(navigator.userAgent)) || navigator.webdriver);
             }
@@ -290,7 +294,7 @@
         /**
          * Add an onClick listeners to all html elements with data-cc attribute
          */
-        var _addDataButtonListeners = function(elem){
+        var _addDataButtonListeners = function (elem) {
 
             var _a = 'accept-';
 
@@ -299,28 +303,28 @@
             var accept_necessary = _getElements(_a + 'necessary');
             var accept_custom_selection = _getElements(_a + 'custom');
 
-            for(var i=0; i<show_settings.length; i++){
+            for (var i = 0; i < show_settings.length; i++) {
                 show_settings[i].setAttribute('aria-haspopup', 'dialog');
-                _addEvent(show_settings[i], 'click', function(event){
+                _addEvent(show_settings[i], 'click', function (event) {
                     event.preventDefault();
                     _cookieconsent.showSettings(0);
                 });
             }
 
-            for(i=0; i<accept_all.length; i++){
-                _addEvent(accept_all[i], 'click', function(event){
+            for (i = 0; i < accept_all.length; i++) {
+                _addEvent(accept_all[i], 'click', function (event) {
                     _acceptAction(event, 'all');
                 });
             }
 
-            for(i=0; i<accept_custom_selection.length; i++){
-                _addEvent(accept_custom_selection[i], 'click', function(event){
+            for (i = 0; i < accept_custom_selection.length; i++) {
+                _addEvent(accept_custom_selection[i], 'click', function (event) {
                     _acceptAction(event);
                 });
             }
 
-            for(i=0; i<accept_necessary.length; i++){
-                _addEvent(accept_necessary[i], 'click', function(event){
+            for (i = 0; i < accept_necessary.length; i++) {
+                _addEvent(accept_necessary[i], 'click', function (event) {
                     _acceptAction(event, []);
                 });
             }
@@ -330,7 +334,7 @@
              * @param {string} data_role
              * @returns {NodeListOf<Element>}
              */
-            function _getElements(data_role){
+            function _getElements (data_role) {
                 return (elem || document).querySelectorAll('[data-cc="' + data_role + '"]');
             }
 
@@ -339,7 +343,7 @@
              * @param {PointerEvent} e source event
              * @param {string} [accept_type]
              */
-            function _acceptAction(e, accept_type){
+            function _acceptAction (e, accept_type) {
                 e.preventDefault();
                 _cookieconsent.accept(accept_type);
                 _cookieconsent.hideSettings();
@@ -353,13 +357,13 @@
          * @param {{}} all_languages - all defined languages
          * @returns {string} validated language
          */
-        var _getValidatedLanguage = function(lang, all_languages){
-            if(all_languages.hasOwnProperty(lang)){
+        var _getValidatedLanguage = function (lang, all_languages) {
+            if (all_languages.hasOwnProperty(lang)) {
                 return lang;
-            }else if(_getKeys(all_languages).length > 0){
-                if(all_languages.hasOwnProperty(_config.current_lang)){
-                    return _config.current_lang ;
-                }else{
+            } else if (_getKeys(all_languages).length > 0) {
+                if (all_languages.hasOwnProperty(_config.current_lang)) {
+                    return _config.current_lang;
+                } else {
                     return _getKeys(all_languages)[0];
                 }
             }
@@ -369,7 +373,7 @@
          * Save reference to first and last focusable elements inside each modal
          * to prevent losing focus while navigating with TAB
          */
-        var _getModalFocusableData = function(){
+        var _getModalFocusableData = function () {
 
             /**
              * Note: any of the below focusable elements, which has the attribute tabindex="-1" AND is either
@@ -377,32 +381,32 @@
              */
             var allowed_focusable_types = ['[href]', 'button', 'input', 'details', '[tabindex="0"]'];
 
-            function _getAllFocusableElements(modal, _array){
-                var focus_later=false, focus_first=false;
+            function _getAllFocusableElements (modal, _array) {
+                var focus_later = false, focus_first = false;
 
                 // ie might throw exception due to complex unsupported selector => a:not([tabindex="-1"])
-                try{
+                try {
                     var focusable_elems = modal.querySelectorAll(allowed_focusable_types.join(':not([tabindex="-1"]), '));
-                    var attr, len=focusable_elems.length, i=0;
+                    var attr, len = focusable_elems.length, i = 0;
 
-                    while(i < len){
+                    while (i < len) {
 
                         attr = focusable_elems[i].getAttribute('data-focus');
 
-                        if(!focus_first && attr === "1"){
+                        if (!focus_first && attr === "1") {
                             focus_first = focusable_elems[i];
 
-                        }else if(attr === "0"){
+                        } else if (attr === "0") {
                             focus_later = focusable_elems[i];
-                            if(!focus_first && focusable_elems[i+1].getAttribute('data-focus') !== "0"){
-                                focus_first = focusable_elems[i+1];
+                            if (!focus_first && focusable_elems[i + 1].getAttribute('data-focus') !== "0") {
+                                focus_first = focusable_elems[i + 1];
                             }
                         }
 
                         i++;
                     }
 
-                }catch(e){
+                } catch (e) {
                     return modal.querySelectorAll(allowed_focusable_types.join(', '));
                 }
 
@@ -424,18 +428,18 @@
             /**
              * If consent modal exists, do the same
              */
-            if(consent_modal_exists){
+            if (consent_modal_exists) {
                 _getAllFocusableElements(consent_modal, consent_modal_focusable);
             }
         }
 
-        var _createConsentModal = function(lang){
+        var _createConsentModal = function (lang) {
 
-            if(user_config['force_consent'] === true)
+            if (user_config['force_consent'] === true)
                 _addClass(html_dom, 'force--consent');
 
             // Create modal if it doesn't exist
-            if(!consent_modal){
+            if (!consent_modal) {
 
                 consent_modal = _createNode('div');
                 var consent_modal_inner_inner = _createNode('div');
@@ -467,9 +471,9 @@
             var consent_modal_title_value = user_config.languages[lang]['consent_modal']['title'];
 
             // Add title (if valid)
-            if(consent_modal_title_value){
+            if (consent_modal_title_value) {
 
-                if(!consent_modal_title){
+                if (!consent_modal_title) {
                     consent_modal_title = _createNode('div');
                     consent_modal_title.id = 'c-ttl';
                     consent_modal_title.setAttribute('role', 'heading');
@@ -482,15 +486,15 @@
 
             var description = user_config.languages[lang]['consent_modal']['description'];
 
-            if(revision_enabled){
-                if(!valid_revision){
+            if (revision_enabled) {
+                if (!valid_revision) {
                     description = description.replace("{{revision_message}}", revision_message || user_config.languages[lang]['consent_modal']['revision_message'] || "");
-                }else{
+                } else {
                     description = description.replace("{{revision_message}}", "");
                 }
             }
 
-            if(!consent_modal_description){
+            if (!consent_modal_description) {
                 consent_modal_description = _createNode('div');
                 consent_modal_description.id = 'c-txt';
                 consent_modal_inner_inner.appendChild(consent_modal_description);
@@ -503,20 +507,20 @@
                 secondary_btn_data = user_config.languages[lang]['consent_modal']['secondary_btn'];
 
             // Add primary button if not falsy
-            if(primary_btn_data){
+            if (primary_btn_data) {
 
-                if(!consent_primary_btn){
+                if (!consent_primary_btn) {
                     consent_primary_btn = _createNode('button');
                     consent_primary_btn.id = 'c-p-bn';
-                    consent_primary_btn.className =  "c-bn";
+                    consent_primary_btn.className = "c-bn";
                     consent_primary_btn.appendChild(generateFocusSpan(1))
 
                     var _accept_type;
 
-                    if(primary_btn_data['role'] === 'accept_all')
+                    if (primary_btn_data['role'] === 'accept_all')
                         _accept_type = 'all'
 
-                    _addEvent(consent_primary_btn, "click", function(){
+                    _addEvent(consent_primary_btn, "click", function () {
                         _cookieconsent.hide();
                         _log("CookieConsent [ACCEPT]: cookie_consent was accepted!");
                         _cookieconsent.accept(_accept_type);
@@ -527,21 +531,21 @@
             }
 
             // Add secondary button if not falsy
-            if(secondary_btn_data){
+            if (secondary_btn_data) {
 
-                if(!consent_secondary_btn){
+                if (!consent_secondary_btn) {
                     consent_secondary_btn = _createNode('button');
                     consent_secondary_btn.id = 'c-s-bn';
                     consent_secondary_btn.className = "c-bn c_link";
                     consent_secondary_btn.appendChild(generateFocusSpan(1))
 
-                    if(secondary_btn_data['role'] === 'accept_necessary'){
-                        _addEvent(consent_secondary_btn, 'click', function(){
+                    if (secondary_btn_data['role'] === 'accept_necessary') {
+                        _addEvent(consent_secondary_btn, 'click', function () {
                             _cookieconsent.hide();
                             _cookieconsent.accept([]); // accept necessary only
                         });
-                    }else{
-                        _addEvent(consent_secondary_btn, 'click', function(){
+                    } else {
+                        _addEvent(consent_secondary_btn, 'click', function () {
                             _cookieconsent.showSettings(0);
                         });
                     }
@@ -553,27 +557,27 @@
             // Swap buttons
             var gui_options_data = user_config['gui_options'];
 
-            if(!consent_modal_inner){
+            if (!consent_modal_inner) {
                 consent_modal_inner = _createNode('div');
                 consent_modal_inner.id = 'c-inr';
 
                 consent_modal_inner.appendChild(consent_modal_inner_inner);
             }
 
-            if(!consent_buttons){
+            if (!consent_buttons) {
                 consent_buttons = _createNode('div');
                 consent_buttons.id = "c-bns";
 
-                if(gui_options_data && gui_options_data['consent_modal'] && gui_options_data['consent_modal']['swap_buttons'] === true){
+                if (gui_options_data && gui_options_data['consent_modal'] && gui_options_data['consent_modal']['swap_buttons'] === true) {
                     secondary_btn_data && consent_buttons.appendChild(consent_secondary_btn);
                     primary_btn_data && consent_buttons.appendChild(consent_primary_btn);
                     consent_buttons.className = 'swap';
-                }else{
+                } else {
                     primary_btn_data && consent_buttons.appendChild(consent_primary_btn);
                     secondary_btn_data && consent_buttons.appendChild(consent_secondary_btn);
                 }
 
-                (primary_btn_data || secondary_btn_data ) && consent_modal_inner.appendChild(consent_buttons);
+                (primary_btn_data || secondary_btn_data) && consent_modal_inner.appendChild(consent_buttons);
                 consent_modal.appendChild(consent_modal_inner);
             }
 
@@ -582,12 +586,12 @@
             _addDataButtonListeners(consent_modal_inner);
         }
 
-        var _createSettingsModal = function(lang){
+        var _createSettingsModal = function (lang) {
 
             /**
              * Create all consent_modal elements
              */
-            if(!settings_container){
+            if (!settings_container) {
                 settings_container = _createNode('div');
                 settings_container.tabIndex = -1;
                 var settings_container_valign = _createNode('div');
@@ -604,27 +608,27 @@
 
                 var clickedInsideModal = false;
 
-                _addEvent(settings_container, 'mouseup', function(e){
+                _addEvent(settings_container, 'mouseup', function (e) {
 
                     /**
                      * Hide modal if mouse pointer is outside modal
                      */
-                    if(
+                    if (
                         settings_modal_visible
                         && !clickedInsideModal
                         && !settings_inner.contains(e.target)
-                    ){
+                    ) {
                         _cookieconsent.hideSettings();
                     }
 
                 });
 
-                _addEvent(settings_container, 'mousedown', function(e){
+                _addEvent(settings_container, 'mousedown', function (e) {
 
                     /**
                      * Check if click started inside modal or not
                      */
-                    if(settings_modal_visible){
+                    if (settings_modal_visible) {
                         clickedInsideModal = settings_inner.contains(e.target);
                     }
 
@@ -657,16 +661,16 @@
                 settings_close_btn_container.appendChild(settings_close_btn);
 
                 // If 'esc' key is pressed inside settings_container div => hide settings
-                _addEvent(document, 'keydown', function(evt){
+                _addEvent(document, 'keydown', function (evt) {
                     if (evt.keyCode === 27 && settings_modal_visible) {
                         _cookieconsent.hideSettings();
                     }
                 }, true);
 
-                _addEvent(settings_close_btn, 'click', function(){
+                _addEvent(settings_close_btn, 'click', function () {
                     _cookieconsent.hideSettings();
                 });
-            }else{
+            } else {
                 new_settings_blocks = _createNode('div');
                 new_settings_blocks.id = 's-bl';
             }
@@ -686,7 +690,7 @@
             settings_title.innerHTML = settings_modal_config['title'];
 
             // Create settings modal content (blocks)
-            for(var i=0; i<n_blocks; ++i){
+            for (var i = 0; i < n_blocks; ++i) {
 
                 var title_data = all_blocks[i]['title'],
                     description_data = all_blocks[i]['description'],
@@ -700,10 +704,14 @@
                 var block_table_container = _createNode('div');
 
                 // Create description
-                if(description_data){
+                if (description_data) {
                     var block_desc = _createNode('div');
                     block_desc.className = 'p';
-                    block_desc.insertAdjacentHTML('beforeend', description_data);
+                    if (typeof description_data === 'string') {
+                        block_desc.innerHTML = description_data;
+                    } else {
+                        ReactDOM.render(description_data, block_desc);
+                    }
                 }
 
                 var block_title_container = _createNode('div');
@@ -713,9 +721,9 @@
                 block_table_container.className = 'desc';
 
                 // Create toggle if specified (opt in/out)
-                if(typeof toggle_data !== 'undefined'){
+                if (typeof toggle_data !== 'undefined') {
 
-                    var accordion_id = "c-ac-"+i;
+                    var accordion_id = "c-ac-" + i;
 
                     // Create button (to collapse/expand block description)
                     var block_title_btn = isExpandable ? _createNode('button') : _createNode('div');
@@ -736,7 +744,7 @@
                     block_switch_span.className = 'c-tg';
                     label_text_span.className = "t-lb";
 
-                    if(isExpandable){
+                    if (isExpandable) {
                         block_title_btn.setAttribute('aria-expanded', 'false');
                         block_title_btn.setAttribute('aria-controls', accordion_id);
                     }
@@ -758,24 +766,24 @@
                      * If consent is valid => retrieve category states from cookie
                      * Otherwise use states defined in the user_config. object
                      */
-                    if(!invalid_consent){
-                        if(_inArray(saved_cookie_content['categories'], cookie_category) > -1){
+                    if (!invalid_consent) {
+                        if (_inArray(saved_cookie_content['categories'], cookie_category) > -1) {
                             block_switch.checked = true;
                             !new_settings_blocks && toggle_states.push(true);
-                        }else{
+                        } else {
                             !new_settings_blocks && toggle_states.push(false);
                         }
-                    }else if(toggle_data['enabled']){
+                    } else if (toggle_data['enabled']) {
                         block_switch.checked = true;
                         !new_settings_blocks && toggle_states.push(true);
 
                         /**
                          * Keep track of categories enabled by default (useful when mode=='opt-out')
                          */
-                        if(toggle_data['enabled'])
+                        if (toggle_data['enabled'])
                             !new_settings_blocks && default_enabled_categories.push(cookie_category);
 
-                    }else{
+                    } else {
                         !new_settings_blocks && toggle_states.push(false);
                     }
 
@@ -784,7 +792,7 @@
                     /**
                      * Set toggle as readonly if true (disable checkbox)
                      */
-                    if(toggle_data['readonly']){
+                    if (toggle_data['readonly']) {
                         block_switch.disabled = true;
                         _addClass(block_switch_span, 'c-ro');
                         !new_settings_blocks && readonly_categories.push(cookie_category);
@@ -805,13 +813,13 @@
                     /**
                      * On button click handle the following :=> aria-expanded, aria-hidden and act class for current block
                      */
-                    isExpandable && (function(accordion, block_section, btn){
-                        _addEvent(block_title_btn, 'click', function(){
-                            if(!_hasClass(block_section, 'act')){
+                    isExpandable && (function (accordion, block_section, btn) {
+                        _addEvent(block_title_btn, 'click', function () {
+                            if (!_hasClass(block_section, 'act')) {
                                 _addClass(block_section, 'act');
                                 btn.setAttribute('aria-expanded', 'true');
                                 accordion.setAttribute('aria-hidden', 'false');
-                            }else{
+                            } else {
                                 _removeClass(block_section, 'act');
                                 btn.setAttribute('aria-expanded', 'false');
                                 accordion.setAttribute('aria-hidden', 'true');
@@ -819,12 +827,12 @@
                         }, false);
                     })(block_table_container, block_section, block_title_btn);
 
-                }else{
+                } else {
                     /**
                      * If block is not a button (no toggle defined),
                      * create a simple div instead
                      */
-                    if(title_data){
+                    if (title_data) {
                         var block_title = _createNode('div');
                         block_title.className = 'b-tl';
                         block_title.setAttribute('role', 'heading');
@@ -838,20 +846,20 @@
                 description_data && block_table_container.appendChild(block_desc);
 
                 // if cookie table found, generate table for this block
-                if(!remove_cookie_tables && typeof cookie_table_data !== 'undefined'){
+                if (!remove_cookie_tables && typeof cookie_table_data !== 'undefined') {
                     var tr_tmp_fragment = document.createDocumentFragment();
 
                     /**
                      * Use custom table headers
                      */
-                    for(var p=0; p<all_table_headers.length; ++p){
+                    for (var p = 0; p < all_table_headers.length; ++p) {
                         // create new header
                         var th1 = _createNode('th');
                         var obj = all_table_headers[p];
                         th1.setAttribute('scope', 'col');
 
                         // get custom header content
-                        if(obj){
+                        if (obj) {
                             var new_column_key = obj && _getKeys(obj)[0];
                             th1.textContent = all_table_headers[p][new_column_key];
                             tr_tmp_fragment.appendChild(th1);
@@ -867,7 +875,7 @@
 
                     var block_table = _createNode('table');
 
-                    if(table_caption) {
+                    if (table_caption) {
                         var caption = _createNode('caption');
                         caption.innerHTML = table_caption;
                         block_table.appendChild(caption);
@@ -879,13 +887,13 @@
                     var tbody_fragment = document.createDocumentFragment();
 
                     // create table content
-                    for(var n=0; n<cookie_table_data.length; n++){
+                    for (var n = 0; n < cookie_table_data.length; n++) {
                         var tr = _createNode('tr');
 
-                        for(var g=0; g<all_table_headers.length; ++g){
+                        for (var g = 0; g < all_table_headers.length; ++g) {
                             // get custom header content
                             obj = all_table_headers[g];
-                            if(obj){
+                            if (obj) {
                                 new_column_key = _getKeys(obj)[0];
 
                                 var td_tmp = _createNode('td');
@@ -914,10 +922,10 @@
                  * - togglable div with title
                  * - a simple div with at least a title or description
                  */
-                if(toggle_data && title_data || (!toggle_data && (title_data || description_data))){
+                if (toggle_data && title_data || (!toggle_data && (title_data || description_data))) {
                     block_section.appendChild(block_table_container);
 
-                    if(new_settings_blocks)
+                    if (new_settings_blocks)
                         new_settings_blocks.appendChild(block_section);
                     else
                         settings_blocks.appendChild(block_section);
@@ -925,18 +933,18 @@
             }
 
             // Create settings buttons
-            if(!settings_buttons){
+            if (!settings_buttons) {
                 settings_buttons = _createNode('div');
                 settings_buttons.id = 's-bns';
             }
 
-            if(!settings_accept_all_btn){
+            if (!settings_accept_all_btn) {
                 settings_accept_all_btn = _createNode('button');
                 settings_accept_all_btn.id = 's-all-bn';
-                settings_accept_all_btn.className ='c-bn';
+                settings_accept_all_btn.className = 'c-bn';
                 settings_buttons.appendChild(settings_accept_all_btn);
 
-                _addEvent(settings_accept_all_btn, 'click', function(){
+                _addEvent(settings_accept_all_btn, 'click', function () {
                     _cookieconsent.accept('all');
                     _cookieconsent.hideSettings();
                     _cookieconsent.hide();
@@ -948,14 +956,14 @@
             var reject_all_btn_text = settings_modal_config['reject_all_btn'];
 
             // Add third [optional] reject all button if provided
-            if(reject_all_btn_text){
+            if (reject_all_btn_text) {
 
-                if(!settings_reject_all_btn){
+                if (!settings_reject_all_btn) {
                     settings_reject_all_btn = _createNode('button');
                     settings_reject_all_btn.id = 's-rall-bn';
                     settings_reject_all_btn.className = 'c-bn';
 
-                    _addEvent(settings_reject_all_btn, 'click', function(){
+                    _addEvent(settings_reject_all_btn, 'click', function () {
                         _cookieconsent.accept([]);
                         _cookieconsent.hideSettings();
                         _cookieconsent.hide();
@@ -969,15 +977,15 @@
             }
 
 
-            if(!settings_save_btn){
+            if (!settings_save_btn) {
                 settings_save_btn = _createNode('button');
                 settings_save_btn.id = 's-sv-bn';
-                settings_save_btn.className ='c-bn';
+                settings_save_btn.className = 'c-bn';
                 settings_buttons.appendChild(settings_save_btn);
 
                 // Add save preferences button onClick event
                 // Hide both settings modal and consent modal
-                _addEvent(settings_save_btn, 'click', function(){
+                _addEvent(settings_save_btn, 'click', function () {
                     _cookieconsent.accept();
                     _cookieconsent.hideSettings();
                     _cookieconsent.hide();
@@ -987,7 +995,7 @@
             settings_save_btn.innerHTML = settings_modal_config['save_settings_btn'];
 
 
-            if(new_settings_blocks) {
+            if (new_settings_blocks) {
                 // replace entire existing cookie category blocks with the new cookie categories new blocks (in a different language)
                 settings_inner.replaceChild(new_settings_blocks, settings_blocks);
                 settings_blocks = new_settings_blocks;
@@ -1012,7 +1020,7 @@
         /**
          * Generate cookie consent html markup
          */
-        var _createCookieConsentHTML = function(){
+        var _createCookieConsentHTML = function () {
 
             // Create main container which holds both consent modal & settings modal
             main_container = _createNode('div');
@@ -1027,7 +1035,7 @@
             var lang = _config.current_lang;
 
             // Create consent modal
-            if(consent_modal_exists)
+            if (consent_modal_exists)
                 _createConsentModal(lang);
 
             // Always create settings modal
@@ -1043,9 +1051,9 @@
          * @param {Boolean} [force] update language fields forcefully
          * @returns {Boolean}
          */
-        _cookieconsent.updateLanguage = function(lang, force){
+        _cookieconsent.updateLanguage = function (lang, force) {
 
-            if(typeof lang !== 'string') return;
+            if (typeof lang !== 'string') return;
 
             /**
              * Validate language to avoid errors
@@ -1055,10 +1063,10 @@
             /**
              * Set language only if it differs from current
              */
-            if(new_validated_lang !== _config.current_lang || force === true){
+            if (new_validated_lang !== _config.current_lang || force === true) {
                 _config.current_lang = new_validated_lang;
 
-                if(consent_modal_exists){
+                if (consent_modal_exists) {
                     _createConsentModal(new_validated_lang);
                 }
 
@@ -1077,7 +1085,7 @@
          *
          * @param {boolean} [clearOnFirstAction]
          */
-        var _autoclearCookies = function(clearOnFirstAction){
+        var _autoclearCookies = function (clearOnFirstAction) {
 
             // Get number of blocks
             var len = all_blocks.length;
@@ -1090,32 +1098,32 @@
             var all_cookies_array = _getCookie('', 'all');
 
             // delete cookies on 'www.domain.com' and '.www.domain.com' (can also be without www)
-            var domains = [_config.cookie_domain, '.'+_config.cookie_domain];
+            var domains = [_config.cookie_domain, '.' + _config.cookie_domain];
 
             // if domain has www, delete cookies also for 'domain.com' and '.domain.com'
-            if(_config.cookie_domain.slice(0, 4) === 'www.'){
+            if (_config.cookie_domain.slice(0, 4) === 'www.') {
                 var non_www_domain = _config.cookie_domain.substr(4);  // remove first 4 chars (www.)
                 domains.push(non_www_domain);
                 domains.push('.' + non_www_domain);
             }
 
             // For each block
-            for(var i=0; i<len; i++){
+            for (var i = 0; i < len; i++) {
 
                 // Save current block (local scope & less accesses -> ~faster value retrieval)
                 var curr_block = all_blocks[i];
 
                 // If current block has a toggle for opt in/out
-                if(curr_block.hasOwnProperty('toggle')){
+                if (curr_block.hasOwnProperty('toggle')) {
 
                     // if current block has a cookie table, an off toggle,
                     // and its preferences were just changed => delete cookies
                     var category_just_disabled = _inArray(changed_settings, curr_block['toggle']['value']) > -1;
-                    if(
+                    if (
                         !toggle_states[++count] &&
                         curr_block.hasOwnProperty('cookie_table') &&
                         (clearOnFirstAction || category_just_disabled)
-                    ){
+                    ) {
                         var curr_cookie_table = curr_block['cookie_table'];
 
                         // Get first property name
@@ -1125,11 +1133,11 @@
                         var clen = curr_cookie_table.length;
 
                         // set "reload_page" to true if reload=on_disable
-                        if(curr_block['toggle']['reload'] === 'on_disable')
+                        if (curr_block['toggle']['reload'] === 'on_disable')
                             category_just_disabled && (reload_page = true);
 
                         // for each row defined in the cookie table
-                        for(var j=0; j<clen; j++){
+                        for (var j = 0; j < clen; j++) {
                             var curr_domains = domains;
 
                             // Get current row of table (corresponds to all cookie params)
@@ -1140,24 +1148,24 @@
                             var curr_cookie_path = curr_row['path'] || false;
 
                             // set domain to the specified domain
-                            curr_cookie_domain && ( curr_domains = [curr_cookie_domain, '.'+curr_cookie_domain]);
+                            curr_cookie_domain && (curr_domains = [curr_cookie_domain, '.' + curr_cookie_domain]);
 
                             // If regex provided => filter cookie array
-                            if(is_regex){
-                                for(var n=0; n<all_cookies_array.length; n++){
-                                    if(all_cookies_array[n].match(curr_cookie_name)){
+                            if (is_regex) {
+                                for (var n = 0; n < all_cookies_array.length; n++) {
+                                    if (all_cookies_array[n].match(curr_cookie_name)) {
                                         found_cookies.push(all_cookies_array[n]);
                                     }
                                 }
-                            }else{
+                            } else {
                                 var found_index = _inArray(all_cookies_array, curr_cookie_name);
-                                if(found_index > -1) found_cookies.push(all_cookies_array[found_index]);
+                                if (found_index > -1) found_cookies.push(all_cookies_array[found_index]);
                             }
 
                             _log("CookieConsent [AUTOCLEAR]: search cookie: '" + curr_cookie_name + "', found:", found_cookies);
 
                             // If cookie exists -> delete it
-                            if(found_cookies.length > 0){
+                            if (found_cookies.length > 0) {
                                 _eraseCookies(found_cookies, curr_cookie_path, curr_domains);
                                 curr_block['toggle']['reload'] === 'on_clear' && (reload_page = true);
                             }
@@ -1171,7 +1179,7 @@
          * Set toggles/checkboxes based on accepted categories and save cookie
          * @param {string[]} accepted_categories - Array of categories to accept
          */
-        var _saveCookiePreferences = function(accepted_categories){
+        var _saveCookiePreferences = function (accepted_categories) {
 
             changed_settings = [];
 
@@ -1179,18 +1187,18 @@
             var category_toggles = settings_container.querySelectorAll('.c-tgl') || [];
 
             // If there are opt in/out toggles ...
-            if(category_toggles.length > 0){
+            if (category_toggles.length > 0) {
 
-                for(var i=0; i<category_toggles.length; i++){
-                    if(_inArray(accepted_categories, all_categories[i]) !== -1){
+                for (var i = 0; i < category_toggles.length; i++) {
+                    if (_inArray(accepted_categories, all_categories[i]) !== -1) {
                         category_toggles[i].checked = true;
-                        if(!toggle_states[i]){
+                        if (!toggle_states[i]) {
                             changed_settings.push(all_categories[i]);
                             toggle_states[i] = true;
                         }
-                    }else{
+                    } else {
                         category_toggles[i].checked = false;
-                        if(toggle_states[i]){
+                        if (toggle_states[i]) {
                             changed_settings.push(all_categories[i]);
                             toggle_states[i] = false;
                         }
@@ -1201,11 +1209,11 @@
             /**
              * Clear cookies when settings/preferences change
              */
-            if(!invalid_consent && _config.autoclear_cookies && changed_settings.length > 0)
+            if (!invalid_consent && _config.autoclear_cookies && changed_settings.length > 0)
                 _autoclearCookies();
 
-            if(!consent_date) consent_date = new Date();
-            if(!consent_uuid) consent_uuid = _uuidv4();
+            if (!consent_date) consent_date = new Date();
+            if (!consent_uuid) consent_uuid = _uuidv4();
 
             saved_cookie_content = {
                 "categories": accepted_categories,
@@ -1218,13 +1226,13 @@
             }
 
             // save cookie with preferences 'categories' (only if never accepted or settings were updated)
-            if(invalid_consent || changed_settings.length > 0){
+            if (invalid_consent || changed_settings.length > 0) {
                 valid_revision = true;
 
                 /**
                  * Update "last_consent_update" only if it is invalid (after t)
                  */
-                if(!last_consent_update)
+                if (!last_consent_update)
                     last_consent_update = consent_date;
                 else
                     last_consent_update = new Date();
@@ -1240,18 +1248,18 @@
                 _manageExistingScripts();
             }
 
-            if(invalid_consent){
+            if (invalid_consent) {
 
                 /**
                  * Delete unused/"zombie" cookies if consent is not valid (not yet expressed or cookie has expired)
                  */
-                if(_config.autoclear_cookies)
+                if (_config.autoclear_cookies)
                     _autoclearCookies(true);
 
-                if(typeof onFirstAction === 'function')
+                if (typeof onFirstAction === 'function')
                     onFirstAction(_cookieconsent.getUserPreferences(), saved_cookie_content);
 
-                if(typeof onAccept === 'function')
+                if (typeof onAccept === 'function')
                     onAccept(saved_cookie_content);
 
                 /**
@@ -1259,17 +1267,17 @@
                  */
                 invalid_consent = false;
 
-                if(_config.mode === 'opt-in') return;
+                if (_config.mode === 'opt-in') return;
             }
 
             // fire onChange only if settings were changed
-            if(typeof onChange === "function" && changed_settings.length > 0)
+            if (typeof onChange === "function" && changed_settings.length > 0)
                 onChange(saved_cookie_content, changed_settings);
 
             /**
              * reload page if needed
              */
-            if(reload_page)
+            if (reload_page)
                 location.reload();
         }
 
@@ -1279,7 +1287,7 @@
          * @param {Object} value
          * @returns {number}
          */
-        var _inArray = function(arr, value){
+        var _inArray = function (arr, value) {
             return arr.indexOf(value);
         }
 
@@ -1288,7 +1296,7 @@
          * @param {Object} print_msg
          * @param {Object} [optional_param]
          */
-        var _log = function(print_msg, optional_param, error){
+        var _log = function (print_msg, optional_param, error) {
             ENABLE_LOGS && (!error ? console.log(print_msg, optional_param !== undefined ? optional_param : ' ') : console.error(print_msg, optional_param || ""));
         }
 
@@ -1297,9 +1305,9 @@
          * @param {string} type
          * @returns {HTMLElement}
          */
-        var _createNode = function(type){
+        var _createNode = function (type) {
             var el = document.createElement(type);
-            if(type === 'button'){
+            if (type === 'button') {
                 el.setAttribute('type', type);
             }
             return el;
@@ -1310,11 +1318,11 @@
          * https://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid?page=1&tab=votes#tab-top
          * @returns {string}
          */
-        var _uuidv4 = function(){
-            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function(c){
-                try{
+        var _uuidv4 = function () {
+            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function (c) {
+                try {
                     return (c ^ (window.crypto || window.msCrypto).getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-                }catch(e){
+                } catch (e) {
                     return '';
                 }
             });
@@ -1347,10 +1355,10 @@
          * Get current client's browser language
          * @returns {string}
          */
-        var _getBrowserLang = function(){
+        var _getBrowserLang = function () {
             var browser_lang = navigator.language || navigator.browserLanguage;
-            browser_lang.length > 2 && (browser_lang = browser_lang[0]+browser_lang[1]);
-            _log("CookieConsent [LANG]: detected_browser_lang = '"+ browser_lang + "'");
+            browser_lang.length > 2 && (browser_lang = browser_lang[0] + browser_lang[1]);
+            _log("CookieConsent [LANG]: detected_browser_lang = '" + browser_lang + "'");
             return browser_lang.toLowerCase()
         }
 
@@ -1358,30 +1366,30 @@
          * Trap focus inside modal and focus the first
          * focusable element of current active modal
          */
-        var _handleFocusTrap = function(){
+        var _handleFocusTrap = function () {
 
-            _addEvent(document, 'keydown', function(e){
+            _addEvent(document, 'keydown', function (e) {
 
                 // If is tab key => ok
-                if(e.key !== 'Tab')
+                if (e.key !== 'Tab')
                     return;
 
-                if(!consent_modal_visible && !settings_modal_visible)
+                if (!consent_modal_visible && !settings_modal_visible)
                     return;
 
                 // If there is any modal to focus
-                if(focusable_edges){
+                if (focusable_edges) {
 
                     var activeElement = getActiveElement();
 
                     // If reached natural end of the tab sequence => restart
                     // If modal is not focused => focus modal
-                    if(e.shiftKey){
+                    if (e.shiftKey) {
                         if (activeElement === focusable_edges[0] || !focused_modal.contains(activeElement)) {
                             e.preventDefault();
                             setFocus(focusable_edges[1])
                         }
-                    }else{
+                    } else {
                         if (activeElement === focusable_edges[1] || !focused_modal.contains(activeElement)) {
                             e.preventDefault();
                             setFocus(focusable_edges[0]);
@@ -1396,10 +1404,10 @@
          * Manage each modal's layout
          * @param {Object} gui_options
          */
-        var _guiManager = function(gui_options, only_consent_modal){
+        var _guiManager = function (gui_options, only_consent_modal) {
 
             // If gui_options is not object => exit
-            if(typeof gui_options !== 'object') return;
+            if (typeof gui_options !== 'object') return;
 
             var consent_modal_options = gui_options['consent_modal'];
             var settings_modal_options = gui_options['settings_modal'];
@@ -1414,18 +1422,18 @@
              * @param {string} layout
              * @param {string[]} position
              */
-            function _setLayout(modal, allowed_layouts, allowed_positions, allowed_transitions, layout, position, transition){
+            function _setLayout (modal, allowed_layouts, allowed_positions, allowed_transitions, layout, position, transition) {
                 position = (position && position.split(" ")) || [];
 
                 // Check if specified layout is valid
-                if(_inArray(allowed_layouts, layout) > -1){
+                if (_inArray(allowed_layouts, layout) > -1) {
 
                     // Add layout classes
                     _addClass(modal, layout);
 
                     // Add position class (if specified)
-                    if(!(layout === 'bar' && position[0] === 'middle') && _inArray(allowed_positions, position[0]) > -1){
-                        for(var i=0; i<position.length; i++){
+                    if (!(layout === 'bar' && position[0] === 'middle') && _inArray(allowed_positions, position[0]) > -1) {
+                        for (var i = 0; i < position.length; i++) {
                             _addClass(modal, position[i]);
                         }
                     }
@@ -1435,7 +1443,7 @@
                 (_inArray(allowed_transitions, transition) > -1) && _addClass(modal, transition);
             }
 
-            if(consent_modal_exists && consent_modal_options){
+            if (consent_modal_exists && consent_modal_options) {
                 _setLayout(
                     consent_modal,
                     ['box', 'bar', 'cloud'],
@@ -1447,7 +1455,7 @@
                 );
             }
 
-            if(!only_consent_modal && settings_modal_options){
+            if (!only_consent_modal && settings_modal_options) {
                 _setLayout(
                     settings_container,
                     ['bar'],
@@ -1465,9 +1473,9 @@
          * @param {string} cookie_category
          * @returns {boolean}
          */
-        _cookieconsent.allowedCategory = function(cookie_category){
+        _cookieconsent.allowedCategory = function (cookie_category) {
 
-            if(!invalid_consent || _config.mode === 'opt-in')
+            if (!invalid_consent || _config.mode === 'opt-in')
                 var allowed_categories = JSON.parse(_getCookie(_config.cookie_name, 'one', true) || '{}')['categories'] || []
             else  // mode is 'opt-out'
                 var allowed_categories = default_enabled_categories;
@@ -1478,14 +1486,14 @@
         /**
          * "Init" method. Will run once and only if modals do not exist
          */
-        _cookieconsent.run = function(user_config){
-            if(!document.getElementById('cc_div')){
+        _cookieconsent.run = function (user_config) {
+            if (!document.getElementById('cc_div')) {
 
                 // configure all parameters
                 _setConfig(user_config);
 
                 // if is bot, don't run plugin
-                if(is_bot) return;
+                if (is_bot) return;
 
                 // Retrieve cookie value (if set)
                 saved_cookie_content = JSON.parse(_getCookie(_config.cookie_name, 'one', true) || "{}");
@@ -1508,7 +1516,7 @@
                 cookie_data = saved_cookie_content['data'] !== undefined ? saved_cookie_content['data'] : null;
 
                 // If revision is enabled and current value !== saved value inside the cookie => revision is not valid
-                if(revision_enabled && saved_cookie_content['revision'] !== _config.revision){
+                if (revision_enabled && saved_cookie_content['revision'] !== _config.revision) {
                     valid_revision = false;
                 }
 
@@ -1522,24 +1530,24 @@
                 _guiManager(user_config['gui_options']);
                 _addDataButtonListeners();
 
-                if(_config.autorun && consent_modal_exists){
+                if (_config.autorun && consent_modal_exists) {
                     _cookieconsent.show(user_config['delay'] || 0);
                 }
 
                 // Add class to enable animations/transitions
-                setTimeout(function(){_addClass(main_container, 'c--anim');}, 30);
+                setTimeout(function () { _addClass(main_container, 'c--anim'); }, 30);
 
                 // Accessibility :=> if tab pressed => trap focus inside modal
-                setTimeout(function(){_handleFocusTrap();}, 100);
+                setTimeout(function () { _handleFocusTrap(); }, 100);
 
                 // If consent is valid
-                if(!invalid_consent){
+                if (!invalid_consent) {
                     var rfc_prop_exists = typeof saved_cookie_content['rfc_cookie'] === "boolean";
 
                     /*
                      * Convert cookie to rfc format (if `use_rfc_cookie` is enabled)
                      */
-                    if(!rfc_prop_exists || (rfc_prop_exists && saved_cookie_content['rfc_cookie'] !== _config.use_rfc_cookie)){
+                    if (!rfc_prop_exists || (rfc_prop_exists && saved_cookie_content['rfc_cookie'] !== _config.use_rfc_cookie)) {
                         saved_cookie_content['rfc_cookie'] = _config.use_rfc_cookie;
                         _setCookie(_config.cookie_name, JSON.stringify(saved_cookie_content));
                     }
@@ -1551,19 +1559,19 @@
 
                     _manageExistingScripts();
 
-                    if(typeof onAccept === 'function')
+                    if (typeof onAccept === 'function')
                         onAccept(saved_cookie_content);
 
                     _log("CookieConsent [NOTICE]: consent already given!", saved_cookie_content);
 
-                }else{
-                    if(_config.mode === 'opt-out'){
+                } else {
+                    if (_config.mode === 'opt-out') {
                         _log("CookieConsent [CONFIG] mode='" + _config.mode + "', default enabled categories:", default_enabled_categories);
                         _manageExistingScripts(default_enabled_categories);
                     }
                     _log("CookieConsent [NOTICE]: ask for consent!");
                 }
-            }else{
+            } else {
                 _log("CookieConsent [NOTICE]: cookie consent already attached to body!");
             }
         }
@@ -1574,9 +1582,9 @@
          *
          * @param {string[]} [must_enable_categories]
          */
-        var _manageExistingScripts = function(must_enable_categories){
+        var _manageExistingScripts = function (must_enable_categories) {
 
-            if(!_config.page_scripts) return;
+            if (!_config.page_scripts) return;
 
             // get all the scripts with "cookie-category" attribute
             var scripts = document.querySelectorAll('script[' + _config.script_selector + ']');
@@ -1588,8 +1596,8 @@
              * @param {Element[]} scripts scripts to load
              * @param {number} index current script to load
              */
-            var _loadScripts = function(scripts, index){
-                if(index < scripts.length){
+            var _loadScripts = function (scripts, index) {
+                if (index < scripts.length) {
 
                     var curr_script = scripts[index];
                     var curr_script_category = curr_script.getAttribute(_config.script_selector);
@@ -1598,7 +1606,7 @@
                      * If current script's category is on the array of categories
                      * accepted by the user => load script
                      */
-                    if(_inArray(accepted_categories, curr_script_category) > -1){
+                    if (_inArray(accepted_categories, curr_script_category) > -1) {
 
                         curr_script.type = curr_script.getAttribute('data-type') || 'text/javascript';
                         curr_script.removeAttribute(_config.script_selector);
@@ -1614,12 +1622,12 @@
                         fresh_script.textContent = curr_script.innerHTML;
 
                         // Copy attributes over to the new "revived" script
-                        (function(destination, source){
+                        (function (destination, source) {
                             var attributes = source.attributes;
                             var len = attributes.length;
-                            for(var i=0; i<len; i++){
+                            for (var i = 0; i < len; i++) {
                                 var attr_name = attributes[i].nodeName;
-                                destination.setAttribute(attr_name , source[attr_name] || source.getAttribute(attr_name));
+                                destination.setAttribute(attr_name, source[attr_name] || source.getAttribute(attr_name));
                             }
                         })(fresh_script, curr_script);
 
@@ -1628,18 +1636,18 @@
 
                         // if script has "src" attribute
                         // try loading it sequentially
-                        if(src){
+                        if (src) {
                             // load script sequentially => the next script will not be loaded
                             // until the current's script onload event triggers
-                            if(fresh_script.readyState) {  // only required for IE <9
-                                fresh_script.onreadystatechange = function() {
-                                    if (fresh_script.readyState === "loaded" || fresh_script.readyState === "complete" ) {
+                            if (fresh_script.readyState) {  // only required for IE <9
+                                fresh_script.onreadystatechange = function () {
+                                    if (fresh_script.readyState === "loaded" || fresh_script.readyState === "complete") {
                                         fresh_script.onreadystatechange = null;
                                         _loadScripts(scripts, ++index);
                                     }
                                 };
-                            }else{  // others
-                                fresh_script.onload = function(){
+                            } else {  // others
+                                fresh_script.onload = function () {
                                     fresh_script.onload = null;
                                     _loadScripts(scripts, ++index);
                                 };
@@ -1653,7 +1661,7 @@
                          * If we managed to get here and scr is still set, it means that
                          * the script is loading/loaded sequentially so don't go any further
                          */
-                        if(src) return;
+                        if (src) return;
                     }
 
                     // Go to next script right away
@@ -1670,36 +1678,36 @@
          * @param {string} [mode]
          * @returns {boolean}
          */
-        var _setCookieData = function(new_data, mode){
+        var _setCookieData = function (new_data, mode) {
 
             var set = false;
             /**
              * If mode is 'update':
              * add/update only the specified props.
              */
-            if(mode === 'update'){
+            if (mode === 'update') {
                 cookie_data = _cookieconsent.get('data');
                 var same_type = typeof cookie_data === typeof new_data;
 
-                if(same_type && typeof cookie_data === "object"){
+                if (same_type && typeof cookie_data === "object") {
                     !cookie_data && (cookie_data = {});
 
-                    for(var prop in new_data){
-                        if(cookie_data[prop] !== new_data[prop]){
+                    for (var prop in new_data) {
+                        if (cookie_data[prop] !== new_data[prop]) {
                             cookie_data[prop] = new_data[prop]
                             set = true;
                         }
                     }
-                }else if((same_type || !cookie_data) && cookie_data !== new_data){
+                } else if ((same_type || !cookie_data) && cookie_data !== new_data) {
                     cookie_data = new_data;
                     set = true;
                 }
-            }else{
+            } else {
                 cookie_data = new_data;
                 set = true;
             }
 
-            if(set){
+            if (set) {
                 saved_cookie_content['data'] = cookie_data;
                 _setCookie(_config.cookie_name, JSON.stringify(saved_cookie_content));
             }
@@ -1713,8 +1721,8 @@
          * @param {object} data
          * @returns {boolean}
          */
-        _cookieconsent.set = function(field, data){
-            switch(field){
+        _cookieconsent.set = function (field, data) {
+            switch (field) {
                 case 'data': return _setCookieData(data['value'], data['mode']);
                 default: return false;
             }
@@ -1726,7 +1734,7 @@
          * @param {string} [cookie_name]
          * @returns {any}
          */
-        _cookieconsent.get = function(field, cookie_name){
+        _cookieconsent.get = function (field, cookie_name) {
             var cookie = JSON.parse(_getCookie(cookie_name || _config.cookie_name, 'one', true) || "{}");
 
             return cookie[field];
@@ -1736,7 +1744,7 @@
          * Read current configuration value
          * @returns {any}
          */
-        _cookieconsent.getConfig = function(field){
+        _cookieconsent.getConfig = function (field) {
             return _config[field] || user_config[field];
         }
 
@@ -1744,13 +1752,13 @@
          * Obtain accepted and rejected categories
          * @returns {{accepted: string[], rejected: string[]}}
          */
-        var _getCurrentCategoriesState = function(){
+        var _getCurrentCategoriesState = function () {
 
             // get accepted categories
             accepted_categories = saved_cookie_content['categories'] || [];
 
             // calculate rejected categories (all_categories - accepted_categories)
-            rejected_categories = all_categories.filter(function(category){
+            rejected_categories = all_categories.filter(function (category) {
                 return (_inArray(accepted_categories, category) === -1);
             });
 
@@ -1765,7 +1773,7 @@
          * @param {{accepted: string[], rejected: string[]}} currentCategoriesState
          * @returns {string}
          */
-        var _getAcceptType = function(currentCategoriesState){
+        var _getAcceptType = function (currentCategoriesState) {
 
             var type = 'custom';
 
@@ -1773,9 +1781,9 @@
             var necessary_categories_length = readonly_categories.length;
 
             // calculate accept type based on accepted/rejected categories
-            if(currentCategoriesState.accepted.length === all_categories.length)
+            if (currentCategoriesState.accepted.length === all_categories.length)
                 type = 'all';
-            else if(currentCategoriesState.accepted.length === necessary_categories_length)
+            else if (currentCategoriesState.accepted.length === necessary_categories_length)
                 type = 'necessary'
 
             return type;
@@ -1792,7 +1800,7 @@
          * Retrieve current user preferences (summary)
          * @returns {userPreferences}
          */
-        _cookieconsent.getUserPreferences = function(){
+        _cookieconsent.getUserPreferences = function () {
             var currentCategoriesState = _getCurrentCategoriesState();
             var accept_type = _getAcceptType(currentCategoriesState);
 
@@ -1814,24 +1822,24 @@
          * @param {scriptLoaded} callback
          * @param {object[]} [attrs] Custom attributes
          */
-        _cookieconsent.loadScript = function(src, callback, attrs){
+        _cookieconsent.loadScript = function (src, callback, attrs) {
 
             var function_defined = typeof callback === 'function';
 
             // Load script only if not already loaded
-            if(!document.querySelector('script[src="' + src + '"]')){
+            if (!document.querySelector('script[src="' + src + '"]')) {
 
                 var script = _createNode('script');
 
                 // if an array is provided => add custom attributes
-                if(attrs && attrs.length > 0){
-                    for(var i=0; i<attrs.length; ++i){
+                if (attrs && attrs.length > 0) {
+                    for (var i = 0; i < attrs.length; ++i) {
                         attrs[i] && script.setAttribute(attrs[i]['name'], attrs[i]['value']);
                     }
                 }
 
                 // if callback function defined => run callback onload
-                if(function_defined){
+                if (function_defined) {
                     script.onload = callback;
                 }
 
@@ -1841,7 +1849,7 @@
                  * Append script to head
                  */
                 document.head.appendChild(script);
-            }else{
+            } else {
                 function_defined && callback();
             }
         }
@@ -1851,7 +1859,7 @@
          * If plugin has already run, call this method to enable
          * the newly added scripts based on currently selected preferences
          */
-        _cookieconsent.updateScripts = function(){
+        _cookieconsent.updateScripts = function () {
             _manageExistingScripts();
         }
 
@@ -1860,12 +1868,12 @@
          * @param {number} [delay]
          * @param {boolean} [create_modal] create modal if it doesn't exist
          */
-        _cookieconsent.show = function(delay, create_modal){
+        _cookieconsent.show = function (delay, create_modal) {
 
-            if(create_modal === true)
+            if (create_modal === true)
                 _createConsentModal(_config.current_lang);
 
-            if(!consent_modal_exists)
+            if (!consent_modal_exists)
                 return;
 
             last_elem_before_modal = getActiveElement();
@@ -1875,7 +1883,7 @@
             consent_modal_visible = true;
             consent_modal.removeAttribute('aria-hidden');
 
-            setTimeout(function() {
+            setTimeout(function () {
                 _addClass(html_dom, "show--consent");
                 _log("CookieConsent [MODAL]: show consent_modal");
             }, delay > 0 ? delay : (create_modal ? 30 : 0));
@@ -1885,9 +1893,9 @@
         /**
          * Hide consent modal
          */
-        _cookieconsent.hide = function(){
+        _cookieconsent.hide = function () {
 
-            if(!consent_modal_exists)
+            if (!consent_modal_exists)
                 return;
 
             consent_modal_visible = false;
@@ -1907,21 +1915,21 @@
          * Show settings modal (with optional delay)
          * @param {number} delay
          */
-        _cookieconsent.showSettings = function(delay){
+        _cookieconsent.showSettings = function (delay) {
 
             settings_modal_visible = true;
             settings_container.removeAttribute('aria-hidden');
 
-            if(consent_modal_visible){
+            if (consent_modal_visible) {
                 last_consent_modal_btn_focus = getActiveElement();
-            }else{
+            } else {
                 last_elem_before_modal = getActiveElement();
             }
 
             focused_modal = settings_container;
             focusable_edges = settings_modal_focusable;
 
-            setTimeout(function() {
+            setTimeout(function () {
                 _addClass(html_dom, "show--settings");
                 _log("CookieConsent [SETTINGS]: show settings_modal");
             }, delay > 0 ? delay : 0);
@@ -1930,7 +1938,7 @@
         /**
          * Hide settings modal
          */
-        _cookieconsent.hideSettings = function(){
+        _cookieconsent.hideSettings = function () {
 
             settings_modal_visible = false;
 
@@ -1941,14 +1949,14 @@
             settings_container.setAttribute('aria-hidden', 'true');
             _removeClass(html_dom, "show--settings");
 
-            if(consent_modal_visible){
+            if (consent_modal_visible) {
 
                 setFocus(last_consent_modal_btn_focus);
                 last_consent_modal_btn_focus = null;
 
                 focused_modal = consent_modal;
                 focusable_edges = consent_modal_focusable;
-            }else{
+            } else {
                 setFocus(last_elem_before_modal);
                 last_elem_before_modal = null;
             }
@@ -1961,7 +1969,7 @@
          * @param {string[]|string} _categories - Categories to accept
          * @param {string[]} [_exclusions] - Excluded categories [optional]
          */
-        _cookieconsent.accept = function(_categories, _exclusions){
+        _cookieconsent.accept = function (_categories, _exclusions) {
             var categories = _categories || undefined;
             var exclusions = _exclusions || [];
             var to_accept = [];
@@ -1970,54 +1978,54 @@
              * Get all accepted categories
              * @returns {string[]}
              */
-            var _getCurrentPreferences = function(){
+            var _getCurrentPreferences = function () {
                 var toggles = document.querySelectorAll('.c-tgl') || [];
                 var states = [];
 
-                for(var i=0; i<toggles.length; i++){
-                    if(toggles[i].checked){
+                for (var i = 0; i < toggles.length; i++) {
+                    if (toggles[i].checked) {
                         states.push(toggles[i].value);
                     }
                 }
                 return states;
             }
 
-            if(!categories){
+            if (!categories) {
                 to_accept = _getCurrentPreferences();
-            }else{
-                if(
+            } else {
+                if (
                     typeof categories === "object" &&
                     typeof categories.length === "number"
-                ){
-                    for(var i=0; i<categories.length; i++){
-                        if(_inArray(all_categories, categories[i]) !== -1)
+                ) {
+                    for (var i = 0; i < categories.length; i++) {
+                        if (_inArray(all_categories, categories[i]) !== -1)
                             to_accept.push(categories[i]);
                     }
-                }else if(typeof categories === "string"){
-                    if(categories === 'all')
+                } else if (typeof categories === "string") {
+                    if (categories === 'all')
                         to_accept = all_categories.slice();
-                    else{
-                        if(_inArray(all_categories, categories) !== -1)
+                    else {
+                        if (_inArray(all_categories, categories) !== -1)
                             to_accept.push(categories);
                     }
                 }
             }
 
             // Remove excluded categories
-            if(exclusions.length >= 1){
-                for(i=0; i<exclusions.length; i++){
-                    to_accept = to_accept.filter(function(item) {
+            if (exclusions.length >= 1) {
+                for (i = 0; i < exclusions.length; i++) {
+                    to_accept = to_accept.filter(function (item) {
                         return item !== exclusions[i]
                     })
                 }
             }
 
             // Add back all the categories set as "readonly/required"
-            for(i=0; i<all_categories.length; i++){
-                if(
+            for (i = 0; i < all_categories.length; i++) {
+                if (
                     readonly_categories.includes(all_categories[i]) === true &&
                     _inArray(to_accept, all_categories[i]) === -1
-                ){
+                ) {
                     to_accept.push(all_categories[i]);
                 }
             }
@@ -2031,17 +2039,17 @@
          * @param {string} [_path] - optional
          * @param {string} [_domain] - optional
          */
-        _cookieconsent.eraseCookies = function(_cookies, _path, _domain){
+        _cookieconsent.eraseCookies = function (_cookies, _path, _domain) {
             var cookies = [];
             var domains = _domain
-                ? [_domain, "."+_domain]
-                : [_config.cookie_domain, "."+_config.cookie_domain];
+                ? [_domain, "." + _domain]
+                : [_config.cookie_domain, "." + _config.cookie_domain];
 
-            if(typeof _cookies === "object" && _cookies.length > 0){
-                for(var i=0; i<_cookies.length; i++){
+            if (typeof _cookies === "object" && _cookies.length > 0) {
+                for (var i = 0; i < _cookies.length; i++) {
                     this.validCookie(_cookies[i]) && cookies.push(_cookies[i]);
                 }
-            }else{
+            } else {
                 this.validCookie(_cookies) && cookies.push(_cookies);
             }
 
@@ -2053,11 +2061,11 @@
          * @param {string} name
          * @param {string} value
          */
-        var _setCookie = function(name, value) {
+        var _setCookie = function (name, value) {
 
             var cookie_expiration = _config.cookie_expiration;
 
-            if(typeof _config.cookie_necessary_only_expiration === 'number' && accept_type === 'necessary')
+            if (typeof _config.cookie_necessary_only_expiration === 'number' && accept_type === 'necessary')
                 cookie_expiration = _config.cookie_necessary_only_expiration;
 
             value = _config.use_rfc_cookie ? encodeURIComponent(value) : value;
@@ -2070,11 +2078,11 @@
             cookieStr += " SameSite=" + _config.cookie_same_site + ";";
 
             // assures cookie works with localhost (=> don't specify domain if on localhost)
-            if(location.hostname.indexOf(".") > -1 && _config.cookie_domain){
+            if (location.hostname.indexOf(".") > -1 && _config.cookie_domain) {
                 cookieStr += " Domain=" + _config.cookie_domain + ";";
             }
 
-            if(location.protocol === "https:") {
+            if (location.protocol === "https:") {
                 cookieStr += " Secure;";
             }
 
@@ -2092,17 +2100,17 @@
          * @param {boolean} [get_value] set to true to obtain its value
          * @returns {string|string[]}
          */
-        var _getCookie = function(name, filter, get_value) {
+        var _getCookie = function (name, filter, get_value) {
             var found;
 
-            if(filter === 'one'){
+            if (filter === 'one') {
                 found = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
                 found = found ? (get_value ? found.pop() : name) : "";
 
-                if(found && name === _config.cookie_name){
-                    try{
+                if (found && name === _config.cookie_name) {
+                    try {
                         found = JSON.parse(found)
-                    }catch(e){
+                    } catch (e) {
                         try {
                             found = JSON.parse(decodeURIComponent(found))
                         } catch (e) {
@@ -2112,10 +2120,10 @@
                     }
                     found = JSON.stringify(found);
                 }
-            }else if(filter === 'all'){
+            } else if (filter === 'all') {
                 // array of names of all existing cookies
                 var cookies = document.cookie.split(/;\s*/); found = [];
-                for(var i=0; i<cookies.length; i++){
+                for (var i = 0; i < cookies.length; i++) {
                     found.push(cookies[i].split("=")[0]);
                 }
             }
@@ -2129,14 +2137,14 @@
          * @param {string} [custom_path] - optional
          * @param {string[]} domains - example: ['domain.com', '.domain.com']
          */
-        var _eraseCookies = function(cookies, custom_path, domains) {
+        var _eraseCookies = function (cookies, custom_path, domains) {
             var path = custom_path ? custom_path : '/';
             var expires = 'Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
-            for(var i=0; i<cookies.length; i++){
-                for(var j=0; j<domains.length; j++){
+            for (var i = 0; i < cookies.length; i++) {
+                for (var j = 0; j < domains.length; j++) {
                     document.cookie = cookies[i] + '=; path=' + path +
-                    (domains[j].indexOf('.') == 0 ? '; domain=' + domains[j] : "") + '; ' + expires;
+                        (domains[j].indexOf('.') == 0 ? '; domain=' + domains[j] : "") + '; ' + expires;
                 }
                 _log("CookieConsent [AUTOCLEAR]: deleting cookie: '" + cookies[i] + "' path: '" + path + "' domain:", domains);
             }
@@ -2147,7 +2155,7 @@
          * @param {string} cookie_name
          * @returns {boolean}
          */
-        _cookieconsent.validCookie = function(cookie_name){
+        _cookieconsent.validCookie = function (cookie_name) {
             return _getCookie(cookie_name, 'one', true) !== "";
         }
 
@@ -2163,16 +2171,16 @@
          * @param {eventFired} fn
          * @param {boolean} [isPassive]
          */
-        var _addEvent = function(elem, event, fn, isPassive) {
-            elem.addEventListener(event, fn , isPassive === true ? { passive: true } : false);
+        var _addEvent = function (elem, event, fn, isPassive) {
+            elem.addEventListener(event, fn, isPassive === true ? { passive: true } : false);
         }
 
         /**
          * Get all prop. keys defined inside object
          * @param {Object} obj
          */
-        var _getKeys = function(obj){
-            if(typeof obj === "object"){
+        var _getKeys = function (obj) {
+            if (typeof obj === "object") {
                 return Object.keys(obj);
             }
         }
@@ -2182,7 +2190,7 @@
          * @param {HTMLElement} elem
          * @param {string} classname
          */
-        var _addClass = function (elem, classname){
+        var _addClass = function (elem, classname) {
             elem.classList.add(classname);
         }
 
@@ -2200,18 +2208,18 @@
          * @param {HTMLElement} el
          * @param {string} className
          */
-        var _hasClass = function(el, className) {
+        var _hasClass = function (el, className) {
             return el.classList.contains(className);
         }
 
         /**
          * @param {1 | 2} modal_id
          */
-        var generateFocusSpan = function(modal_id) {
+        var generateFocusSpan = function (modal_id) {
             var span = _createNode('span');
             span.tabIndex = -1;
 
-            if(modal_id === 1)
+            if (modal_id === 1)
                 cmFocusSpan = span;
             else
                 smFocusSpan = span;
@@ -2222,21 +2230,21 @@
         /**
          * @param {HTMLElement} el
          */
-        var setFocus = function(el) {
+        var setFocus = function (el) {
             el && el instanceof HTMLElement && el.focus();
         }
 
         /**
          * https://github.com/orestbida/cookieconsent/issues/481
          */
-        var discardUnsavedToggles = function() {
+        var discardUnsavedToggles = function () {
 
             /**
              * @type {NodeListOf<HTMLInputElement>}
              */
             var toggles = settings_inner.querySelectorAll('.c-tgl');
 
-            for(var i=0; i<toggles.length; i++) {
+            for (var i = 0; i < toggles.length; i++) {
                 var category = toggles[i].value;
                 var is_readonly = readonly_categories.includes(category);
 
@@ -2248,7 +2256,7 @@
         /**
          * @returns {Element | null}
          */
-        var getActiveElement = function() {
+        var getActiveElement = function () {
             return document.activeElement;
         }
 
@@ -2259,7 +2267,7 @@
     /**
      * Make CookieConsent object accessible globally
      */
-    if(typeof window !== 'undefined' && typeof window[init] !== 'function'){
+    if (typeof window !== 'undefined' && typeof window[init] !== 'function') {
         window[init] = CookieConsent
     }
 })();
